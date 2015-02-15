@@ -107,3 +107,37 @@ balancedTree x s
     | s <= 0 = E
     | odd s = T (balancedTree x $ s `div` 2) x (balancedTree x $ s `div` 2)
     | otherwise = T (balancedTree x $ (s `div` 2) - 1) x (balancedTree x $ s `div` 2)
+
+-- Exercise 2.6
+-- Use Tree to create a FiniteMap implementation
+class FiniteMap m k where
+    emptyFM :: m k a
+    bindFM :: m k a -> k -> a -> m k a
+    lookupFM :: m k a -> k -> Maybe a
+
+-- Want to use type synonym, but the FiniteMap class requires partial
+-- application of types, which isn't allowed on type synonyms. So wrapping and
+-- unwrapping are in store.
+newtype Map k a = Map (Tree (k,a))
+
+unwrapMap :: Map k a -> Tree (k,a)
+unwrapMap (Map t) = t
+
+instance (Ord k) => FiniteMap Map k where
+    emptyFM = Map E
+
+    -- At least we can do the wrapping/unwrapping at the top level, so the
+    -- recursion is clean.
+    bindFM m key' val' = Map $ bindFM' (unwrapMap m) key' val' where
+        bindFM' E key val = T E (key, val) E
+        bindFM' (T l p@(pk,_) r) key val
+            | key < pk = T (bindFM' l key val) p r
+            | key > pk = T l p (bindFM' r key val)
+            | otherwise = T l (key, val) r
+
+    lookupFM m key' = lookupFM' (unwrapMap m) key' where
+        lookupFM' E _ = Nothing
+        lookupFM' (T l (pk, pv) r) key
+            | key < pk = lookupFM' l key
+            | key > pk = lookupFM' r key
+            | otherwise = Just pv

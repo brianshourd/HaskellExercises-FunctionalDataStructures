@@ -6,7 +6,9 @@ import Test.Framework.Providers.QuickCheck2 (testProperty)
 
 import Test.HUnit
 import Test.QuickCheck (Gen, choose, Property, forAll)
-import Data.List (nub)
+
+import Control.Monad (liftM)
+import Data.List (nub, nubBy)
 
 import Chapter2
 
@@ -43,6 +45,12 @@ chapter2TestGroup = testGroup "Chapter 2"
         ,testProperty "complete has correct size" prop_completeCorrectSize
         ,testProperty "balancedTree has correct size" prop_balancedTreeCorrectSize
         ,testProperty "balancedTree is balanced" prop_balancedTreeBalanced
+        ]
+    ,testGroup "Exercise 2.6: FiniteMap instance for trees"
+        [testProperty "bind then lookup succeeds" prop_mapBindLookup
+        ,testProperty "multibind contains all" prop_mapMultiBindLookup
+        ,testProperty "multiple bind overwrites" prop_mapMultiBindOverrides
+        ,testProperty "lookup doesn't have things not in the map" prop_mapLookupOnlyContains
         ]
     ]
 
@@ -131,3 +139,21 @@ prop_balancedTreeBalanced x = forAll balancedTreeInts $ impl where
     impl s = abs ((size l) - (size r)) <= 1 where
         (T l _ r) = balancedTree x s
 
+prop_mapBindLookup :: Char -> Int -> Bool
+prop_mapBindLookup key val = lookupFM (bindFM (emptyFM :: Map Char Int) key val) key == Just val
+
+prop_mapMultiBindLookup :: [(Char, Int)] -> Bool
+prop_mapMultiBindLookup kvps = all (\(key, val) -> lookupFM m key == Just val) kvps' where
+    m = foldl (\m' (k,v) -> bindFM m' k v) (emptyFM :: Map Char Int) kvps'
+    kvps' = nubBy (\(k1,_) (k2,_) -> k1 == k2) kvps
+
+prop_mapMultiBindOverrides :: Char -> Int -> Int -> Bool
+prop_mapMultiBindOverrides key v1 v2 = lookupFM (bindFM (bindFM (emptyFM :: Map Char Int) key v1) key v2) key == Just v2
+
+prop_mapLookupOnlyContains :: [(Char, Int)] -> Char -> Bool
+prop_mapLookupOnlyContains kvps key' = lookupFM m key' == isKey where
+    m = foldl (\m' (k,v) -> bindFM m' k v) (emptyFM :: Map Char Int) kvps'
+    kvps' = nubBy (\(k1,_) (k2,_) -> k1 == k2) kvps
+    isKey = liftM snd . safeHead . filter (\(k,_) -> k == key') $ kvps'
+    safeHead [] = Nothing
+    safeHead (x:_) = Just x
