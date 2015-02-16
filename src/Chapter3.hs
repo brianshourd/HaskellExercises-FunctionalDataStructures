@@ -49,3 +49,16 @@ insert' x E = T 1 x E E
 insert' x h@(T _ y a b) =
     if x <= y then makeT x E h
     else makeT y a (insert x b)
+
+-- Exercise 3.3 implement fromList
+fromList :: (Ord a) => [a] -> LeftistHeap a
+fromList = multiMerge . map (\x -> T 1 x E E) where
+    multiMerge (h1:h2:hs) = merge (merge h1 h2) (multiMerge hs)
+    multiMerge (h:hs) = merge h (multiMerge hs)
+    multiMerge [] = empty
+
+-- Used for testing
+drainHeap :: (Ord a, Heap m) => m a -> [a]
+drainHeap h = case (findMin h) of
+    Nothing -> []
+    Just x -> x:(drainHeap . deleteMin $ h) where
