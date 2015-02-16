@@ -20,9 +20,16 @@ chapter3TestGroup = testGroup "Chapter 3"
         ,testProperty "gets everything in heap" prop_drainHeapFindsAll
         ]
     ,testGroup "Exercise 3.3: fromList"
-        [testCase "fromList is empty when list is" case_fromListPreservesEmpty
-        ,testProperty "fromList min is list min" prop_fromListPreservesMin
-        ,testProperty "fromList contains all elements" prop_fromListContainsAll
+        [testCase "fromList is empty when list is" $ case_fromListPreservesEmpty fromList
+        ,testProperty "fromList min is list min" $ prop_fromListPreservesMin fromList
+        ,testProperty "fromList contains all elements" $ prop_fromListContainsAll fromList
+        ]
+    ,testGroup "Exercise 3.4: weight-based heaps"
+        [testProperty "weight is actually weight" prop_weightIsNumElems
+        ,testProperty "has weight-based leftist property" prop_WBLeftist
+        ,testCase "fromListW is empty when list is" $ case_fromListPreservesEmpty fromListW
+        ,testProperty "fromListW min is list min" $ prop_fromListPreservesMin fromListW
+        ,testProperty "fromListW contains all elements" $ prop_fromListContainsAll fromListW
         ]
     ]
 
@@ -39,12 +46,24 @@ prop_drainHeapIsSorted xs = isSorted . drainHeap . foldl (flip insert) E $ xs
 prop_drainHeapFindsAll :: [Int] -> Bool
 prop_drainHeapFindsAll xs = (sort . drainHeap . foldl (flip insert) E $ xs) == sort xs
 
-case_fromListPreservesEmpty :: Assertion
-case_fromListPreservesEmpty = fromList ([] :: [Int]) @?= (empty :: LeftistHeap Int)
+type FromListType a = [a] -> LeftistHeap a
 
-prop_fromListPreservesMin :: NonEmptyList Char -> Bool
-prop_fromListPreservesMin (NonEmpty xs) = findMin (fromList xs) == Just (minimum xs)
+case_fromListPreservesEmpty :: FromListType Int -> Assertion
+case_fromListPreservesEmpty fl = fl ([] :: [Int]) @?= (empty :: LeftistHeap Int)
 
-prop_fromListContainsAll :: NonEmptyList Int -> Bool
-prop_fromListContainsAll (NonEmpty xs) = (sort . drainHeap . fromList $ xs) == sort xs
+prop_fromListPreservesMin :: FromListType Char -> NonEmptyList Char -> Bool
+prop_fromListPreservesMin fl (NonEmpty xs) = findMin (fl xs) == Just (minimum xs)
 
+prop_fromListContainsAll :: FromListType Int -> NonEmptyList Int -> Bool
+prop_fromListContainsAll fl (NonEmpty xs) = (sort . drainHeap . fl $ xs) == sort xs
+
+prop_weightIsNumElems :: [Char] -> Bool
+prop_weightIsNumElems xs = weight h == numElems h where
+    h = foldl (flip insertW) emptyW xs
+    numElems :: LeftistHeap a -> Int
+    numElems E = 0
+    numElems (T _ _ a b) = 1 + (numElems a) + (numElems b)
+
+prop_WBLeftist :: NonEmptyList Int -> Bool
+prop_WBLeftist (NonEmpty xs) = weight leftTree >= weight rightTree where
+    (T _ _ leftTree rightTree) = fromListW xs
