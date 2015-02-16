@@ -14,6 +14,7 @@ class Heap h where
     deleteMin :: (Ord a) => h a -> h a
 
 data LeftistHeap a = E | T Int a (LeftistHeap a) (LeftistHeap a)
+    deriving (Show, Eq)
 
 rank :: LeftistHeap a -> Int
 rank E = 0
@@ -41,3 +42,10 @@ instance Heap LeftistHeap where
 
     deleteMin E = E
     deleteMin (T _ _ a b) = merge a b
+
+-- Exercise 3.2: Merge-free insert
+insert' :: (Ord a) => a -> LeftistHeap a -> LeftistHeap a
+insert' x E = T 1 x E E
+insert' x h@(T _ y a b) =
+    if x <= y then makeT x E h
+    else makeT y a (insert x b)
