@@ -16,7 +16,7 @@ cabal-version:        >=1.8
 
 library
   exposed-modules:    Chapter2,
-                      Chapter3
+                      Chapter3.LeftistHeap
   build-depends:      base >= 4
   ghc-options:        -Wall
   hs-source-dirs:     src

@@ -1,4 +1,4 @@
-module Chapter3Tests (chapter3TestGroup) where
+module Chapter3.LeftistHeapTests (leftistHeapTestGroup) where
 
 import Test.Framework (testGroup, Test)
 import Test.Framework.Providers.HUnit
@@ -8,10 +8,10 @@ import Test.HUnit
 import Test.QuickCheck.Modifiers
 import Data.List (sort)
 
-import Chapter3
+import Chapter3.LeftistHeap
 
-chapter3TestGroup :: Test.Framework.Test
-chapter3TestGroup = testGroup "Chapter 3"
+leftistHeapTestGroup :: Test.Framework.Test
+leftistHeapTestGroup = testGroup "Chapter 3"
     [testGroup "Exercise 3.2: Merge-free insert"
         [testProperty "insert' works same as insert" prop_insertSame
         ]

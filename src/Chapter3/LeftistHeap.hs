@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FunctionalDependencies #-}
-module Chapter3 where
+module Chapter3.LeftistHeap where
 
 -- Some code provided
 class Heap h where
