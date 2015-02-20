@@ -20,6 +20,7 @@ binomialHeapTestGroup = testGroup "Chapter 3 - BinomialHeaps"
         ,testProperty "merge maintains rank order" prop_mergeRankOrder
         ,testProperty "insTree maintains unique tree rank" prop_insTreeUniqRank
         ,testProperty "merge maintains unique tree rank" prop_mergeUniqRank
+        ,testProperty "findMin' acts like findMin" prop_findMin'
         ]
     ]
 
@@ -68,3 +69,7 @@ prop_insTreeUniqRank xs = forAll intTree (\t -> hasUniqueRank (insTree h t)) whe
 
 prop_mergeUniqRank :: [Int] -> [Int] -> Bool
 prop_mergeUniqRank xs ys = hasUniqueRank $ merge (heapFromList xs) (heapFromList ys)
+
+prop_findMin' :: [Int] -> Bool
+prop_findMin' xs = findMin h == findMin' h where
+    h = heapFromList xs

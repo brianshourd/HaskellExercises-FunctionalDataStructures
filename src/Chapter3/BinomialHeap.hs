@@ -52,3 +52,8 @@ deleteMin :: (Ord a) => Heap a -> Heap a
 deleteMin h = case removeMinTree h of
     Nothing -> []
     Just ((Node _ _ ts1), ts2) -> merge (reverse ts1) ts2
+
+-- Exercise 3.5: define findMin without a call to removeMinTree
+findMin' :: (Ord a) => Heap a -> Maybe a
+findMin' [] = Nothing
+findMin' h = Just . minimum . map root $ h
