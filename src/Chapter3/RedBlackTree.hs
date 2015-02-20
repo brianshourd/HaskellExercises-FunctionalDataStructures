@@ -35,3 +35,9 @@ balance color left val right = T color left val right
 balance' :: Tree a -> Tree a -> Tree a -> Tree a -> a -> a -> a -> Tree a
 balance' a b c d x y z = T Red (T Black a x b) y (T Black c z d)
 
+-- Exercise 3.9: Write a function fromOrdList that takes a sorted list with no
+-- duplicated and converts it into a red-black tree in O(n) time
+-- One way to achieve this is to build a tree where each level has the same
+-- color and the colors alternate, ending with the final layer all Red
+fromOrdList :: (Ord a) => [a] -> Tree a
+fromOrdList = undefined

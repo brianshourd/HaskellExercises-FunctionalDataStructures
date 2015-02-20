@@ -25,6 +25,12 @@ redBlackTreeTestGroup = testGroup "Chapter 3 - RedBlackTree"
         ,testProperty "member finds all inserted elements" prop_memberFindsInserts
         ,testProperty "member doesn't find elements that weren't inserted" prop_memberNotFind
         ]
+    ,testGroup "fromOrdList tests"
+        [testProperty "top element is head" prop_fromOrdListHead
+        ,testProperty "preserves red invariant" prop_fromOrdListRedInvariant
+        ,testProperty "preserves black invariant" prop_fromOrdListBlackInvariant
+        ,testProperty "member finds all inserted elements" prop_fromOrdListMemberFindsInserts
+        ]
     ]
 
 isBlackOrEmpty :: Tree a -> Bool
@@ -82,3 +88,24 @@ prop_memberNotFind :: [Int] -> Property
 prop_memberNotFind xs = forAll notInXs (\x -> member h x == False) where
     h = treeFromList xs
     notInXs = arbitrary `suchThat` (\x -> not $ x `elem` xs)
+
+orderedNonEmptyLists :: Gen [Int]
+orderedNonEmptyLists = do
+    (Ordered xs) <- arbitrary `suchThat` (\(Ordered xs) -> not $ null xs)
+    return xs
+
+prop_fromOrdListHead :: Property
+prop_fromOrdListHead = forAll orderedNonEmptyLists topElementIsHead where
+    topElementIsHead xs = top == head xs where
+        T _ _ top _ = fromOrdList xs
+
+prop_fromOrdListRedInvariant :: OrderedList Int -> Bool
+prop_fromOrdListRedInvariant (Ordered xs) = redInvariant . fromOrdList $ xs
+
+prop_fromOrdListBlackInvariant :: OrderedList Char -> Bool
+prop_fromOrdListBlackInvariant (Ordered xs) = blackInvariant . fromOrdList $ xs
+
+prop_fromOrdListMemberFindsInserts :: OrderedList Int -> Bool
+prop_fromOrdListMemberFindsInserts (Ordered xs) = all (member h) xs where
+    h = fromOrdList xs
+
