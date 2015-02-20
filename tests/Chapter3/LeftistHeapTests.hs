@@ -11,7 +11,7 @@ import Data.List (sort)
 import Chapter3.LeftistHeap
 
 leftistHeapTestGroup :: Test.Framework.Test
-leftistHeapTestGroup = testGroup "Chapter 3"
+leftistHeapTestGroup = testGroup "Chapter 3 - Leftist Heaps"
     [testGroup "Exercise 3.2: Merge-free insert"
         [testProperty "insert' works same as insert" prop_insertSame
         ]
