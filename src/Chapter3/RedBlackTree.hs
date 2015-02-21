@@ -40,4 +40,20 @@ balance' a b c d x y z = T Red (T Black a x b) y (T Black c z d)
 -- One way to achieve this is to build a tree where each level has the same
 -- color and the colors alternate, ending with the final layer all Red
 fromOrdList :: (Ord a) => [a] -> Tree a
-fromOrdList = undefined
+fromOrdList ys = fst $ fromOrdList' ys (length ys)
+
+-- fromOrdList' takes a source to pull inputs from and a max size to build
+-- a tree to, and returns such a tree, along with the unused inputs
+fromOrdList' :: [a] -> Int -> (Tree a, [a])
+fromOrdList' [] _ = (E, [])
+fromOrdList' xs 0 = (E, xs)
+fromOrdList' (x:xs) 1 = (T Red E x E, xs)
+fromOrdList' xs size = (T Black left x right, xs'') where
+    (lsize, rsize) = split (size - 1)
+    split s =
+        if odd s then (half + 1, half)
+        else (half, half) where
+            half = s `div` 2
+    (left, xs') = fromOrdList' xs lsize
+    x = head xs'
+    (right, xs'') = fromOrdList' (tail xs') rsize
