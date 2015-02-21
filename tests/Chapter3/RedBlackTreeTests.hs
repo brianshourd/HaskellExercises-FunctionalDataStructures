@@ -30,6 +30,10 @@ redBlackTreeTestGroup = testGroup "Chapter 3 - RedBlackTree"
         ,testProperty "preserves black invariant" prop_fromOrdListBlackInvariant
         ,testProperty "member finds all inserted elements" prop_fromOrdListMemberFindsInserts
         ]
+    ,testGroup "insert' tests"
+        [testProperty "insert' preserves red invariant" prop_insertRedInvariant'
+        ,testProperty "insert' preserves black invariant" prop_insertBlackInvariant'
+        ]
     ]
 
 isBlackOrEmpty :: Tree a -> Bool
@@ -97,4 +101,13 @@ prop_fromOrdListBlackInvariant (Ordered xs) = blackInvariant . fromOrdList $ xs
 prop_fromOrdListMemberFindsInserts :: OrderedList Int -> Bool
 prop_fromOrdListMemberFindsInserts (Ordered xs) = all (member h) xs where
     h = fromOrdList xs
+
+treeFromList' :: (Ord a) => [a] -> Tree a
+treeFromList' = foldl insert' E
+
+prop_insertRedInvariant' :: [Int] -> Bool
+prop_insertRedInvariant' = redInvariant . treeFromList'
+
+prop_insertBlackInvariant' :: [Char] -> Bool
+prop_insertBlackInvariant' = blackInvariant . treeFromList'
 

@@ -57,3 +57,24 @@ fromOrdList' xs size = (T Black left x right, xs'') where
     (left, xs') = fromOrdList' xs lsize
     x = head xs'
     (right, xs'') = fromOrdList' (tail xs') rsize
+
+-- Exercise 3.10 make balance even faster
+rbalance :: Color -> Tree a -> a -> Tree a -> Tree a
+rbalance Black a x (T Red b y (T _ c z d)) = balance' a b c d x y z
+rbalance Black a x (T Red (T _ b y c) z d) = balance' a b c d x y z
+rbalance color left val right = T color left val right
+
+lbalance :: Color -> Tree a -> a -> Tree a -> Tree a
+lbalance Black (T Red a x (T _ b y c)) z d = balance' a b c d x y z
+lbalance Black (T Red (T _ a x b) y c) z d = balance' a b c d x y z
+lbalance color left val right = T color left val right
+
+insert' :: (Ord a) => Tree a -> a -> Tree a
+insert' t' x' = T Black a' y' b' where
+    (T _ a' y' b') = ins t' x'
+    ins E x = T Red E x E
+    ins s@(T c a y b) x
+        | x < y = lbalance c (ins a x) y b
+        | x > y = rbalance c a y (ins b x)
+        | otherwise = s
+
