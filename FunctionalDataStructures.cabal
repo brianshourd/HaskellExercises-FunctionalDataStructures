@@ -19,7 +19,9 @@ library
                       Chapter3.LeftistHeap,
                       Chapter3.BinomialHeap
                       Chapter3.RedBlackTree
-  build-depends:      base >= 4
+                      Chapter5.Deque
+  build-depends:      base >= 4.7,
+                      safe
   ghc-options:        -Wall
   hs-source-dirs:     src
 
@@ -33,5 +35,6 @@ test-suite FunctionalDataStructuresTest
                       FunctionalDataStructures,
                       QuickCheck,
                       HUnit,
-                      base >= 4
+                      base >= 4.7,
+                      safe
   hs-source-dirs:     tests
