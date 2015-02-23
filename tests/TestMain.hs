@@ -7,6 +7,7 @@ import Chapter3.LeftistHeapTests
 import Chapter3.BinomialHeapTests
 import Chapter3.RedBlackTreeTests
 import Chapter5.DequeTests
+import Chapter5.PairingHeapTests
 
 main :: IO ()
 main = defaultMain
@@ -15,4 +16,5 @@ main = defaultMain
     ,binomialHeapTestGroup
     ,redBlackTreeTestGroup
     ,dequeTestGroup
+    ,pairingHeapTestGroup
     ]

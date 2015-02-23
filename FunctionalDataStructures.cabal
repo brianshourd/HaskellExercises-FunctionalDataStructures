@@ -20,6 +20,7 @@ library
                       Chapter3.BinomialHeap
                       Chapter3.RedBlackTree
                       Chapter5.Deque
+                      Chapter5.PairingHeap
   build-depends:      base >= 4.7,
                       safe
   ghc-options:        -Wall
