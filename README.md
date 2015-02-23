@@ -13,3 +13,5 @@ source material.
 
 I'm sharing them because, honestly, why not? I don't expect them to be useful to
 others, but who knows.
+
+[![Build Status](https://travis-ci.org/brianshourd/HaskellExercises-FunctionalDataStructures.svg)](https://travis-ci.org/brianshourd/HaskellExercises-FunctionalDataStructures)
